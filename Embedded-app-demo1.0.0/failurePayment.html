@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success Message</title>
+    <style>
+        /* Success message style */
+        .success-message {
+            color: red;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Button to trigger success message -->
+    <button onclick="back()">Submit</button>
+
+    <!-- Success message placeholder -->
+    <div id="successMessage" class="success-message">Failure Payment</div>
+
+    <script>
+        // Function to show success message
+        function back() {
+           window.history.back();
+        }
+    </script>
+
+</body>
+</html>

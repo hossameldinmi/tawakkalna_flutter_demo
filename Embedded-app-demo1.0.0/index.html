@@ -1,0 +1,1387 @@
+<!Doctype Html>
+<Html>
+
+<Head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="miniapps.css">
+  <script type="text/javascript" src="twkhelper/twkhelper.js"></script>
+  <script type="text/javascript" src="constants.js"></script>
+  <script>
+    var documentData = undefined
+    let livenessCheckImageBase64Data = undefined;
+    function testError(element) {
+      let v =  error
+
+    }
+
+    function testOpenUrl(element) {
+      let urlType = Number(document.getElementById("urlType").value);
+      let url = document.getElementById("urlString").value;
+      TWK.openUrl(url, urlType).then((ret) => {
+        if (ret.success === true) {
+          document.getElementById("openUrlResponseLabel").textContent = "ok: " + JSON.stringify(ret.result, null, 2);
+        } else {
+          document.getElementById("openUrlResponseLabel").textContent = "fail: " + JSON.stringify(ret.result, null, 2);
+        }
+      });
+    }
+
+    function testApiLogAsync(element) {
+      let url = document.getElementById("apiUrl").value;
+      let requestBody = document.getElementById("requestBody").value;
+      let requestHeaders = document.getElementById("requestHeaders").value
+      let responseBody = document.getElementById("responseBody").value;
+      let responseHeaders = document.getElementById("responseHeaders").value;
+      let responseCode = Number(document.getElementById("responseCode").value);
+      let methodType = Number(document.getElementById("methodType").value);
+      let requestDate = new Date(document.getElementById("requestDate").value);
+      let responseDate = new Date(document.getElementById("responseDate").value);
+      setTimeout(() => {
+        TWK.apiLog(url, methodType, requestBody, requestHeaders, requestDate, responseBody, responseHeaders, responseDate, responseCode)
+      }, 400);
+    }
+
+    function testAPI(element) {
+      fetch(`https://api.openweathermap.org/data/2.5/weather?q=CAIRO&units=metric&appid=108dd9a67c96f23039937fe6f3c91963`)
+        .then(response => response.json())
+        .then(
+         
+        )
+        .catch(err => alert('Wrong City name'));
+    }
+    
+    function testApiLog(element) {
+      let url = document.getElementById("apiUrl").value;
+      let requestBody = document.getElementById("requestBody").value;
+      let requestHeaders = document.getElementById("requestHeaders").value
+      let responseBody = document.getElementById("responseBody").value;
+      let responseHeaders = document.getElementById("responseHeaders").value;
+      let responseCode = Number(document.getElementById("responseCode").value);
+      let methodType = Number(document.getElementById("methodType").value);
+      let requestDate = new Date(document.getElementById("requestDate").value);
+      let responseDate = new Date(document.getElementById("responseDate").value);
+
+      TWK.apiLog(url, methodType, requestBody, requestHeaders, requestDate, responseBody, responseHeaders, responseDate, responseCode).then((ret) => {
+          if (ENABLELOG == true) {
+            console.log("success " + ret.success);
+          }
+          if (ret.success) {
+            document.getElementById("apiLogResponseLabel").textContent = "ok: " + JSON.stringify(ret.result, null, 2)
+          } else {
+            document.getElementById("apiLogResponseLabel").textContent = "fail: " + JSON.stringify(ret.result, null, 2)
+          }
+        })
+    }
+
+    function testGeneralLog(element) {
+      TWK.generateToken().then((response) => {
+          if (response.success) {
+            let tokenValue = JSON.parse(JSON.stringify(response.result, null, 2)).token;
+            // or you can use this also
+            let token = response.result.token;
+          } else {
+            // handle errors here like you will receive response like this {"code": 1000006, "status" : "401"} for service permission not added to the portal
+          }
+        })
+
+      let eventName = document.getElementById("eventName").value
+      let logType = Number(document.getElementById("logType").value)
+      let logMessage = document.getElementById("logMessage").value
+      TWK.generalLog(eventName, logType, logMessage).then((ret) => {
+          if (ENABLELOG == true) {
+            console.log("success " + ret.success);
+          }
+          if (ret.success) {
+            document.getElementById("generalLogResponseLabel").textContent = "ok: " + JSON.stringify(ret.result, null, 2)
+          } else {
+            document.getElementById("generalLogResponseLabel").textContent = "fail: " + JSON.stringify(ret.result, null, 2)
+          }
+        })
+    }
+
+    function testGeneralLogAsync(element) {
+      let eventName = document.getElementById("eventName").value
+      let logType = Number(document.getElementById("logType").value)
+      let logMessage = document.getElementById("logMessage").value
+      setTimeout(() => {
+        TWK.generalLog(eventName, logType, logMessage).then((ret) => {
+          if (ENABLELOG == true) {
+            console.log("success " + ret.success);
+          }
+          if (ret.success) {
+            document.getElementById("generalLogResponseLabel").textContent = "ok: " + JSON.stringify(ret.result, null, 2)
+          } else {
+            document.getElementById("generalLogResponseLabel").textContent = "fail: " + JSON.stringify(ret.result, null, 2)
+          }
+        })
+      }, 400);
+    }
+
+    function testDeleteDocument(element) {
+      let referenceNumber = document.getElementById("deleteDocumentReferenceNumber").value
+      let categoryId = document.getElementById("deleteDocumentCategoryId").value
+      TWK.deleteDocument(referenceNumber, categoryId).then((ret) => {
+          if (ENABLELOG == true) {
+            console.log("success " + ret.success);
+          }
+          if (ret.success) {
+            document.getElementById("deleteDocumentsResponseLabel").textContent = "ok: " + JSON.stringify(ret.result, null, 2)
+          } else {
+            document.getElementById("deleteDocumentsResponseLabel").textContent = "fail: " + JSON.stringify(ret.result, null, 2)
+          }
+        })
+    }
+
+    function testAddDocument(element) {
+      let referenceNumber = document.getElementById("referenceNumber").value
+      let categoryId = document.getElementById("categoryId").value
+      let documentName = document.getElementById("documentName").value
+
+      TWK.addDocument(documentName, documentData, referenceNumber, categoryId).then((ret) => {
+        if (ENABLELOG == true) {
+          console.log("success " + ret.success);
+        }
+        if (ret.success) {
+          document.getElementById("documentsResponseLabel").textContent = "ok: " + JSON.stringify(ret.result, null, 2)
+        } else {
+          document.getElementById("documentsResponseLabel").textContent = "fail: " + JSON.stringify(ret.result, null, 2)
+        }
+      })
+    }
+
+    function testUpdateDocument(element) {
+      let referenceNumber = document.getElementById("referenceNumber").value
+      let categoryId = document.getElementById("categoryId").value
+      let documentName = document.getElementById("documentName").value
+      TWK.updateDocument(documentName, documentData, referenceNumber, categoryId).then((ret) => {
+          if (ENABLELOG == true) {
+            console.log("success " + ret.success);
+          }
+          if (ret.success) {
+            document.getElementById("documentsResponseLabel").textContent = "ok: " + JSON.stringify(ret.result, null, 2)
+          } else {
+            document.getElementById("documentsResponseLabel").textContent = "fail: " + JSON.stringify(ret.result, null, 2)
+          }
+        })
+    }
+
+    function testChooseDocumentFile(element, helperfunction) {
+      helperfunction().then((ret) => {
+
+        if (ENABLELOG == true) {
+          console.log("success " + ret.success);
+        }
+        if (ret.success) {
+          TWK.generalLog("Choose Document", LogType.info, ret.result).then((ret) => {})
+          documentData = ret.result.data
+        } else {
+          TWK.generalLog("Choose Document", LogType.error, ret.result).then((ret) => {})
+          documentData = undefined
+          document.getElementById("documentsResponseLabel").textContent = "fail: " + JSON.stringify(ret.result, null, 2)
+        }
+      })
+    }
+
+    function testBaseFetch(element, helperfunction) {
+      helperfunction().then((ret) => {
+        if (ENABLELOG == true) {
+          console.log("success " + ret.success);
+        }
+        if (ret.success) {
+          TWK.generalLog("Base Fetch", LogType.info, ret.result).then((ret) => {})
+          element.nextElementSibling.textContent = "ok: " + JSON.stringify(ret.result, null, 2)
+        }
+        else {
+          TWK.generalLog("Base Fetch", LogType.error, ret.result).then((ret) => {})
+          element.nextElementSibling.textContent = "fail: " + JSON.stringify(ret.result, null, 2)
+        }
+      })
+    };
+    function testGalleryFetch(element, helperfunction) {
+      helperfunction().then((ret) => {
+        if (ENABLELOG == true) {
+          console.log("success " + ret.success);
+        }
+        if (ret.success) {
+          TWK.generalLog("Gallery Fetch", LogType.debug, ret.result).then((ret) => {})
+
+          element.nextElementSibling.innerHTML = ""
+          var imageContent = ""
+          for (entry in ret.result) {
+            var ent = ret.result[entry]
+            if (ent.type == "video") {
+              TWK.getRawData(ent.data).then((ret) => {
+                const videoEl = document.createElement('video')
+                videoEl.src = "data:video/mp4;base64," + ret.result.data
+                videoEl.controls = true
+                videoEl.classList.add("selectedImage")
+                element.nextElementSibling.appendChild(videoEl)
+              })
+            }
+            else if (ent.type == "image") {
+              TWK.getRawData(ent.data).then((ret) => {
+                const imageEl = document.createElement('img')
+                imageEl.src = "data:image/png;base64," + ret.result.data
+                imageEl.classList.add("selectedImage")
+                element.nextElementSibling.appendChild(imageEl)
+              })
+            } else {
+              const divEl = document.createElement('div')
+              divEl.innerText = "file data length " + ent.data.length
+              divEl.classList.add("selectedImage")
+              element.nextElementSibling.appendChild(divEl)
+            }
+          }
+        }
+        else {
+          TWK.generalLog("Gallery Fetch", LogType.error, ret.result).then((ret) => {})
+          element.nextElementSibling.innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+        }
+      })
+    }
+    function testUserPhoto(element, helperfunction) {
+      helperfunction().then((ret) => {
+        element.nextElementSibling.innerHTML = ""
+        if (ENABLELOG == true) {
+          console.log("success " + ret.success);
+        }
+        if (ret.success) {
+          TWK.generalLog("user photo", LogType.info, ret.result).then((ret) => {})
+
+          var imageContent = ""
+          TWK.getRawData(ret.result.data).then((ret) => {
+            TWK.generalLog("user photo raw data", LogType.debug, ret.result).then((ret) => {})
+
+            const imageEl = document.createElement('img')
+            imageEl.src = "data:image/png;base64," + ret.result.data
+            imageEl.classList.add("selectedImage")
+            element.nextElementSibling.appendChild(imageEl)
+          })
+
+        }
+        else {
+          TWK.generalLog("user photo", LogType.error, ret.result).then((ret) => {})
+          element.nextElementSibling.innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+        }
+      })
+    }
+    function testGetImage(element) {
+      let nationalId = document.getElementById("nationalId").value
+      try {
+        if (isNaN(nationalId), Number(nationalId)) {
+          TWK.getImage(Number(nationalId)).then((ret) => {
+            document.getElementById("imageDive").innerHTML = ""
+            if (ENABLELOG == true) {
+              console.log("success " + ret.success);
+            }
+            if (ret.success) {
+              var imageContent = ""
+              TWK.getRawData(ret.result.data).then((ret) => {
+                const imageEl = document.createElement('img')
+                imageEl.src = "data:image/png;base64," + ret.result.data
+                imageEl.classList.add("selectedImage")
+                document.getElementById("imageDive").appendChild(imageEl)
+              })
+            }
+            else {
+              document.getElementById("imageDive").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+            }
+          })
+        } else {
+          document.getElementById("imageDive").innerHTML = "fail: Invalid National Id please enter numbers only"
+        }
+      }
+      catch {
+        document.getElementById("imageDive").innerHTML = "fail: Invalid National Id please enter numbers only"
+      }
+    }
+    function testChooseFile(element, helperfunction) {
+      helperfunction().then((ret) => {
+        if (ENABLELOG == true) {
+          console.log("success " + ret.success);
+        }
+        element.nextElementSibling.innerHTML = ""
+        if (ret.success) {
+          TWK.generalLog("choose file", LogType.debug, ret.result).then((ret) => {})
+          element.nextElementSibling.innerHTML = " " + ret.result.data
+        }
+        else {
+          TWK.generalLog("choose file", LogType.error, ret.result).then((ret) => {})
+          element.nextElementSibling.innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+        }
+      })
+    }
+
+    function testCameraPhoto(element, helperfunction) {
+      helperfunction().then((ret) => {
+        if (ENABLELOG == true) {
+          console.log("success " + ret.success);
+        }
+        element.nextElementSibling.innerHTML = ""
+        if (ret.success) {
+          TWK.generalLog("camera photo", LogType.debug, ret.result).then((ret) => {})
+
+          if (ret.result.type == "image") {
+            TWK.getRawData(ret.result.data).then((ret) => {
+              const imageEl = document.createElement('img')
+              imageEl.src = "data:image/png;base64," + ret.result.data
+              imageEl.classList.add("selectedImage")
+              element.nextElementSibling.appendChild(imageEl)
+            })
+          }
+        }
+        else {
+          TWK.generalLog("camera photo", LogType.warning, ret.result).then((ret) => {})
+          element.nextElementSibling.innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+        }
+      })
+    }
+
+    function testCameraVideo(element, helperfunction) {
+      helperfunction().then((ret) => {
+        if (ENABLELOG == true) {
+          console.log("success " + ret.success);
+        }
+        if (ret.success) {
+          TWK.generalLog("camera video", LogType.debug, ret.result).then((ret) => {})
+
+          element.nextElementSibling.innerHTML = ""
+          TWK.getRawData(ret.result.data).then((ret) => {
+            const videoEl = document.createElement('video')
+            videoEl.src = "data:video/mp4;base64," + ret.result.data
+            videoEl.controls = true
+            videoEl.classList.add("selectedImage")
+            element.nextElementSibling.appendChild(videoEl)
+          })
+        }
+        else {
+          TWK.generalLog("camera video", LogType.error, ret.result).then((ret) => {})
+          element.nextElementSibling.innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+        }
+      })
+    }
+
+    function testShareSubmit(element) {
+      try {
+        fileToBase64(file).then((ret) => {
+          TWK.share(ret, file.type).then((ret) => {
+            if (ENABLELOG == true) {
+              console.log("success " + ret.success);
+            }
+            if (ret.success) {
+              TWK.generalLog("share", LogType.debug, ret.result).then((ret) => {})
+              document.getElementById("shareResponseLabel").innerHTML = "" + JSON.stringify(ret.result)
+            }
+            else {
+              TWK.generalLog("share", LogType.warning, ret.result).then((ret) => {})
+              document.getElementById("shareResponseLabel").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+            }
+          })
+        })
+      } catch (error) {
+        console.error("Error:", error);
+      }
+
+    }
+    function testSharePdfSubmit(element) {
+      try {
+        var fileName = document.getElementById("shareFileName").value
+        const pdfFile = new File(['Hello world!'], 'hello.pdf', { type: 'application/pdf' })
+        fileToBase64(pdfFile).then((ret) => {
+          TWK.share(fileName, ret, pdfFile.type).then((ret) => {
+            if (ENABLELOG == true) {
+              console.log("success " + ret.success);
+            }
+            if (ret.success) {
+              TWK.generalLog("share pdf", LogType.debug, ret.result).then((ret) => {})
+
+              document.getElementById("sharePdfResponseLabel").innerHTML = "" + JSON.stringify(ret.result)
+            }
+            else {
+              TWK.generalLog("share pdf", LogType.warning, ret.result).then((ret) => {})
+              document.getElementById("sharePdfResponseLabel").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+            }
+          })
+        })
+      } catch (error) {
+        console.error("Error:", error);
+      }
+
+    }
+
+    function testSharePngSubmit(element) {
+      try {
+        var fileName = document.getElementById("shareFileName").value
+
+        TWK.share(fileName, pngBase64, "image/png").then((ret) => {
+          if (ENABLELOG == true) {
+            console.log("success " + ret.success);
+          }
+          if (ret.success) {
+            TWK.generalLog("share png", LogType.info, ret.result).then((ret) => {})
+
+            document.getElementById("sharePdfResponseLabel").innerHTML = "" + JSON.stringify(ret.result)
+          }
+          else {
+            TWK.generalLog("share png", LogType.warning, ret.result).then((ret) => {})
+            document.getElementById("sharePdfResponseLabel").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+          }
+        })
+
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+    function testShareJpgSubmit(element) {
+      try {
+        var fileName = document.getElementById("shareFileName").value
+        TWK.share(fileName, jpgBase64, "image/jpeg").then((ret) => {
+          if (ENABLELOG == true) {
+            console.log("success " + ret.success);
+          }
+          if (ret.success) {
+            TWK.generalLog("share jpg", LogType.debug, ret.result).then((ret) => {})
+            document.getElementById("sharePdfResponseLabel").innerHTML = "" + JSON.stringify(ret.result)
+          }
+          else {
+            TWK.generalLog("share jpg", LogType.error, ret.result).then((ret) => {})
+            document.getElementById("sharePdfResponseLabel").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+          }
+        })
+
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+    function convertStringToBase64(str) {
+      // Encode the string as a UTF-8 byte array
+      const utf8Encoder = new TextEncoder();
+      const utf8Bytes = utf8Encoder.encode(str);
+      // Convert the byte array to Base64
+      const base64String = btoa(String.fromCharCode.apply(null, utf8Bytes));
+      return base64String;
+    }
+
+    function testShareTextStringSubmit(element) {
+      try {
+        var textString = document.getElementById("shareText").value
+        var fileName = document.getElementById("shareFileName").value
+        var stringBase64 = convertStringToBase64(textString);
+        TWK.share(fileName, stringBase64, "text/plain").then((ret) => {
+          if (ENABLELOG == true) {
+            console.log("success " + ret.success);
+          }
+          if (ret.success) {
+            TWK.generalLog("share text", LogType.debug, ret.result).then((ret) => {})
+            document.getElementById("sharePdfResponseLabel").innerHTML = "" + JSON.stringify(ret.result)
+          }
+          else {
+            TWK.generalLog("share text", LogType.warning, ret.result).then((ret) => {})
+            document.getElementById("sharePdfResponseLabel").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+          }
+        })
+
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+    function testShareNotSupportedSubmit(element) {
+      try {
+        var fileName = document.getElementById("shareFileName").value
+
+        const txtFile = new File(['Hello world!'], 'hello.html', { type: 'text/html' })
+        fileToBase64(txtFile).then((ret) => {
+          TWK.share(fileName, ret, txtFile.type).then((ret) => {
+            if (ENABLELOG == true) {
+              console.log("success " + ret.success);
+            }
+            if (ret.success) {
+              document.getElementById("sharePdfResponseLabel").innerHTML = "" + JSON.stringify(ret.result)
+            }
+            else {
+              document.getElementById("sharePdfResponseLabel").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+            }
+          })
+        })
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+    function testCardSubmit(element) {
+
+      var cardAttributes = [
+        {
+          key: "JobTitleAr",
+          value: document.getElementById("jobTitleAr").value
+        },
+        {
+          key: "JobTitleEn",
+          value: document.getElementById("jobTitleEn").value
+        },
+        {
+          key: "EmployeeNo",
+          value: document.getElementById("employeeNo").value
+        },
+        {
+          key: "ExpirationDateEn",
+          value: document.getElementById("expiryDateEn").value
+        },
+        {
+          key: "ExpirationDateAr",
+          value: document.getElementById("expiryDateAr").value
+        }
+      ];
+
+      var payload = {
+        agencyId: new Number(document.getElementById("agencyId").value),
+        uniqueCardId: new Number(document.getElementById("uniqueCardId").value),
+        referenceNo: document.getElementById("cardReferenceNo").value,
+        expirationDate: document.getElementById("cardExpiryDate").value,
+        cardAttributes: cardAttributes
+      }
+
+      var actionType = new Number(document.getElementById("actionType").value)
+
+      TWK.postCard(actionType, payload).then((ret) => {
+        if (ENABLELOG == true) {
+          console.log("success " + ret.success);
+        }
+        if (ret.success) {
+          document.getElementById("addCardResponseLabel").innerHTML = "" + JSON.stringify(ret.result)
+        }
+        else {
+          document.getElementById("addCardResponseLabel").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+        }
+      })
+    }
+
+    function testOpenService(element) {
+      var serviceId = document.getElementById("serviceId").value
+      var serviceParams = document.getElementById("serviceParms").value
+      try {
+        let parameterArray = [];
+
+        if (serviceParams.length > 0) {
+          let obj = eval('(' + serviceParams + ')');
+          for (let i in obj) {
+            parameterArray.push(obj[i]);
+          }
+        }
+
+        TWK.openService(serviceId, parameterArray).then((ret) => {
+          if (ENABLELOG == true) {
+            console.log("success " + ret.success);
+          }
+          if (ret.success) {
+            document.getElementById("openServiceResponseLabel").innerHTML = "" + JSON.stringify(ret.result)
+          }
+          else {
+            document.getElementById("openServiceResponseLabel").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+          }
+        })
+      } catch (error) {
+        document.getElementById("openServiceResponseLabel").innerHTML = "fail: Error stringifying object for service paramaters: "
+      }
+    }
+
+    function testOpenScreen(element) {
+      var parameterArray = []
+      var screenType = document.getElementById("screenType").value
+      var keyName = document.getElementById("keyname").value
+      var keyValue = document.getElementById("valuename").value
+
+      parameterArray.push({ key: keyName, value: keyValue })
+
+      TWK.openScreen(screenType, parameterArray).then((ret) => {
+        if (ENABLELOG == true) {
+          console.log("success " + ret.success);
+        }
+        if (ret.success) {
+          TWK.generalLog("open screen", LogType.info, ret.result).then((ret) => {})
+          element.nextElementSibling.innerHTML = "" + JSON.stringify(ret.result)
+        }
+        else {
+          TWK.generalLog("open screen", LogType.warning, ret.result).then((ret) => {})
+          element.nextElementSibling.innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+        }
+      })
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      
+      TWK.startApiIntercept()
+      if (ENABLELOG == true) {
+        console.log('DOM fully loaded and parsed ' + LAUNCHPAYLOAD);
+      }
+      const elem = document.getElementById("launchPayload");
+      elem.innerText = "" + LAUNCHPAYLOAD
+      const fileInput = document.getElementById('fileInput');
+
+
+      document.getElementById('localStorage').innerText = JSON.stringify(localStorage);;
+      let style = document.createElement('style');
+      style.innerHTML = "input,select:focus, textarea {font-size: 16px !important;}";
+      document.head.appendChild(style);
+    });
+    function testSetLocalStorage(element) {
+      var key = document.getElementById("localStorageKey").value
+      var value = document.getElementById("localStorageValue").value
+      localStorage.setItem(key, value);
+      // const entries = Object.entries(localStorage)
+      document.getElementById('localStorage').innerText = JSON.stringify(localStorage);;
+
+    }
+    function testGetLocalStorage(element) {
+      var key = document.getElementById("localStorageGetKey").value
+      document.getElementById('localStoragekeyValue').innerText = localStorage.getItem(key);
+    }
+
+    function testPayment(element) {
+      let paymentUrl = document.getElementById("paymentUrl").value
+      let successCallbackUrl = document.getElementById("paymenSuccessCallback").value
+      let failureCallbackUrl = document.getElementById("paymenFailureCallback").value
+      let successCallbackUrlList = successCallbackUrl.split(",").map(item => item.trim());
+      let failureCallbackUrlList = failureCallbackUrl.split(",").map(item => item.trim());
+      TWK.setPaymentConfiguration(successCallbackUrlList, failureCallbackUrlList, "successPayment.html", "failurePayment.html")
+
+      setTimeout(function () {
+        window.location.replace(paymentUrl);
+      }, 2000);
+
+    }
+
+    function testChooseFileAndGetFileName(element) {
+      TWK.getFileId().then((ret) => {
+            console.log("success " + ret.success);
+            element.nextElementSibling.innerHTML = ""
+            let decodedFileName = '';
+            if (ret.success) {
+              //here you will get the file name in the [result.data] for the chooosen file
+              let fileName = ret.result.file_name
+      
+              // from the mime type you can detect the type of the file and load the 
+              let mimeType = ret.result.mime_type;
+              TWK.getRawData(ret.result.data).then((response) => {
+                if (response.success) {
+                  let fileBase64Data = response.result.data;
+                  element.nextElementSibling.innerHTML = "file name: " + fileName + "<br> mime Type: " + mimeType + "<br>Data:<br>" + fileBase64Data;
+                } else {
+                  element.nextElementSibling.innerHTML = "fail: " + JSON.stringify(ret.result, null, 2);
+                }
+              });
+            }
+            else {
+              element.nextElementSibling.innerHTML = "fail: " + JSON.stringify(ret.result, null, 2);
+            }
+          });
+      }
+      function testLivenessCheckCamera(element) {
+        let configurations = [];
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_DETECTION_ENABLED, document.getElementById("face_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_DETECTION_RATIO, document.getElementById("face_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.GLASSES_DETECTION_ENABLED, document.getElementById("glasses_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.GLASSES_DETECTION_RATIO, document.getElementById("glasses_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_CENTRAL_VERTICAL_ENABLED, document.getElementById("face_centeral_vertical_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_CENTRAL_VERTICAL_RATIO, document.getElementById("face_centeral_vertical_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.MOUTH_DETECTION_ENABLED, document.getElementById("mouth_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.MOUTH_DETECTION_RATIO, document.getElementById("mouth_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_COLOR_DETECTION_ENABLED, document.getElementById("eyes_color_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_COLOR_DETECTION_RATIO, document.getElementById("eyes_color_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.LIGHTNING_DETECTION_ENABLED, document.getElementById("lightining_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.LIGHTNING_DETECTION_RATIO, document.getElementById("lightining_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_DETECTION_ENABLED, document.getElementById("eyes_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_DETECTION_RATIO, document.getElementById("eyes_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.BACKGROUND_DETECTION_ENABLED, document.getElementById("background_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.BACKGROUND_DETECTION_RATIO, document.getElementById("background_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.HEAD_WEAR_CHECK_ENABLED, document.getElementById("head_wear_check_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.ALLOWED_PHOTO_TYPES, document.getElementById("allowd_image_types").value || 'jpg,jpeg'));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.IS_FEMALE, document.getElementById("is_female").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.PHOTO_WIDTH_IN_PX, document.getElementById("max_photo_width_in_px").value || 450));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.PHOTO_HEIGHT_IN_PX, document.getElementById("max_photo_height_in_px").value || 450));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.MAX_PHOTO_SIZE_IN_KB, document.getElementById("max_photo_size_kb").value || 5000));
+
+          TWK.livenessCheckCamera(configurations).then((ret) => {
+          if (ret.success) {
+           livenessCheckImageBase64Data = ret.result.data;
+            document.getElementById("livenessCheckDev").innerHTML = "";
+            const div = document.createElement('div');
+            div.innerHTML = `file name: ${ret.result.file_name} <br> mime type: ${ret.result.mime_type}`;
+            const imageEl = document.createElement('img');
+            imageEl.src = "data:image/png;base64," + livenessCheckImageBase64Data;
+            imageEl.classList.add("selectedImage");
+            const newButton = document.createElement('button');
+            newButton.addEventListener('click', testShareLivenessCheckImage);
+            newButton.textContent = 'Share image';
+            document.getElementById("livenessCheckDev").appendChild(imageEl);
+            document.getElementById("livenessCheckDev").appendChild(div);
+            document.getElementById("livenessCheckDev").appendChild(newButton);
+          } else {
+            document.getElementById("livenessCheckDev").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2);
+          }
+        });
+      }
+
+      function testLivenessCheckImageFromGallery(element) {
+        let configurations = [];
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_DETECTION_ENABLED, document.getElementById("face_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_DETECTION_RATIO, document.getElementById("face_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.GLASSES_DETECTION_ENABLED, document.getElementById("glasses_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.GLASSES_DETECTION_RATIO, document.getElementById("glasses_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_CENTRAL_VERTICAL_ENABLED, document.getElementById("face_centeral_vertical_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_CENTRAL_VERTICAL_RATIO, document.getElementById("face_centeral_vertical_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.MOUTH_DETECTION_ENABLED, document.getElementById("mouth_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.MOUTH_DETECTION_RATIO, document.getElementById("mouth_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_COLOR_DETECTION_ENABLED, document.getElementById("eyes_color_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_COLOR_DETECTION_RATIO, document.getElementById("eyes_color_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.LIGHTNING_DETECTION_ENABLED, document.getElementById("lightining_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.LIGHTNING_DETECTION_RATIO, document.getElementById("lightining_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_DETECTION_ENABLED, document.getElementById("eyes_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_DETECTION_RATIO, document.getElementById("eyes_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.BACKGROUND_DETECTION_ENABLED, document.getElementById("background_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.BACKGROUND_DETECTION_RATIO, document.getElementById("background_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.HEAD_WEAR_CHECK_ENABLED, document.getElementById("head_wear_check_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.ALLOWED_PHOTO_TYPES, document.getElementById("allowd_image_types").value || 'jpg,jpeg'));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.IS_FEMALE, document.getElementById("is_female").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.PHOTO_WIDTH_IN_PX, document.getElementById("max_photo_width_in_px").value || 450));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.PHOTO_HEIGHT_IN_PX, document.getElementById("max_photo_height_in_px").value || 450));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.MAX_PHOTO_SIZE_IN_KB, document.getElementById("max_photo_size_kb").value || 5000));
+
+          TWK.livenessCheckImageFromGallery(configurations).then((ret) => {
+            if (ret.success) {
+              livenessCheckImageBase64Data = ret.result.data;
+              document.getElementById("livenessCheckDev").innerHTML = ""
+              const div = document.createElement('div');
+              div.innerHTML = `file name: ${ret.result.file_name} <br> mime type: ${ret.result.mime_type}`;
+              const imageEl = document.createElement('img')
+              imageEl.src = "data:image/png;base64," + livenessCheckImageBase64Data
+              imageEl.classList.add("selectedImage")
+              const newButton = document.createElement('button');
+              newButton.addEventListener('click', testShareLivenessCheckImage);
+              newButton.textContent = 'Share image';
+              document.getElementById("livenessCheckDev").appendChild(imageEl)
+              document.getElementById("livenessCheckDev").appendChild(div);
+              document.getElementById("livenessCheckDev").appendChild(newButton);
+            } else {
+              document.getElementById("livenessCheckDev").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2);
+            }
+       });
+      }
+
+
+      function testLivenessCheckImageFromFiles(element) {
+        let configurations = [];
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_DETECTION_ENABLED, document.getElementById("face_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_DETECTION_RATIO, document.getElementById("face_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.GLASSES_DETECTION_ENABLED, document.getElementById("glasses_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.GLASSES_DETECTION_RATIO, document.getElementById("glasses_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_CENTRAL_VERTICAL_ENABLED, document.getElementById("face_centeral_vertical_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.FACE_CENTRAL_VERTICAL_RATIO, document.getElementById("face_centeral_vertical_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.MOUTH_DETECTION_ENABLED, document.getElementById("mouth_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.MOUTH_DETECTION_RATIO, document.getElementById("mouth_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_COLOR_DETECTION_ENABLED, document.getElementById("eyes_color_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_COLOR_DETECTION_RATIO, document.getElementById("eyes_color_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.LIGHTNING_DETECTION_ENABLED, document.getElementById("lightining_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.LIGHTNING_DETECTION_RATIO, document.getElementById("lightining_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_DETECTION_ENABLED, document.getElementById("eyes_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.EYES_DETECTION_RATIO, document.getElementById("eyes_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.BACKGROUND_DETECTION_ENABLED, document.getElementById("background_detection_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.BACKGROUND_DETECTION_RATIO, document.getElementById("background_detection_ratio").value || 50));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.HEAD_WEAR_CHECK_ENABLED, document.getElementById("head_wear_check_enabled").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.ALLOWED_PHOTO_TYPES, document.getElementById("allowd_image_types").value || 'jpg,jpeg'));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.IS_FEMALE, document.getElementById("is_female").checked || false));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.PHOTO_WIDTH_IN_PX, document.getElementById("max_photo_width_in_px").value || 450));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.PHOTO_HEIGHT_IN_PX, document.getElementById("max_photo_height_in_px").value || 450));
+        configurations.push(new LivenessCheckConfiguration(LivenessCheckConfigurationType.MAX_PHOTO_SIZE_IN_KB, document.getElementById("max_photo_size_kb").value || 5000));
+
+          TWK.livenessCheckImageFromFiles(configurations).then((ret) => {
+            if (ret.success) {
+              livenessCheckImageBase64Data = ret.result.data;
+              document.getElementById("livenessCheckDev").innerHTML = ""
+              const div = document.createElement('div');
+              div.innerHTML = `file name: ${ret.result.file_name} <br> mime type: ${ret.result.mime_type}`;
+              const imageEl = document.createElement('img')
+              imageEl.src = "data:image/png;base64," + livenessCheckImageBase64Data
+              imageEl.classList.add("selectedImage")
+              const newButton = document.createElement('button');
+              newButton.addEventListener('click', testShareLivenessCheckImage);
+              newButton.textContent = 'Share image';
+              document.getElementById("livenessCheckDev").appendChild(imageEl)
+              document.getElementById("livenessCheckDev").appendChild(div);
+              document.getElementById("livenessCheckDev").appendChild(newButton);
+            } else {
+              document.getElementById("livenessCheckDev").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2);
+            }
+       });
+      }
+
+      function testShareLivenessCheckImage(element) {
+        try {
+        TWK.share('liveness_check_photo', livenessCheckImageBase64Data, "image/jpeg").then((ret) => {
+          if (ENABLELOG == true) {
+            console.log("success " + ret.success);
+          }
+          if (ret.success) {
+            TWK.generalLog("share jpeg", LogType.debug, ret.result).then((ret) => {})
+            document.getElementById("sharePdfResponseLabel").innerHTML = "" + JSON.stringify(ret.result)
+          }
+          else {
+            TWK.generalLog("share jepg", LogType.error, ret.result).then((ret) => {})
+            document.getElementById("sharePdfResponseLabel").innerHTML = "fail: " + JSON.stringify(ret.result, null, 2)
+          }
+        })
+
+      } catch (error) {
+        console.error("Error:", error);
+      }
+      }
+  </script>
+</Head>
+
+<Body>
+  <div class="apicallbox"></div>
+    <div class="apicallboxbutton" >Url Schemes </div>
+    <div class="apiresultbox"> 
+      <br>
+      <a href="tel:888-336-1301"> tel:| 888-336-1301</a>
+      <br>
+      <a href="sms:888-336-1301"> sms:| 888-336-1301</a>
+      <br>
+      <a href="mailto:test@gmail.com"> mailto:| test@gmail.com</a>
+      <br>
+      <a href="http://www.google.com"> http| http://www.google.com</a>
+      <br>
+      <a href="https://www.google.com">https| http://www.google.com</a>
+    </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserId)">Get user national ID or Iqama number
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserIdExpiryDate)">Get User National ID Or Eqama Expiry Date
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserIqamaType)">Get User Iqama Type
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserType)">Get user type</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserBirthDate)">Get user birth date</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserMobileNumber)">Get user mobile number</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserGender)">Get user gender</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserLocation)">Get user location</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserNationality)">Get user nationality name</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox"></div>
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.V2.getUserNationality)">Get user nationality name V2</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserNationalityISO)">Get user nationality ISO
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserFullName)">Get user full name</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.V2.getUserFullName)">Get user full name V2</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserMaritalStatus)">Get user marital status</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserBloodType)">Get user blood type</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserNationalAddress)">Get user national address
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserDegreeType)">Get user degree type</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserOccupation)">Get user occupation</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserFamilyMembers)">Get user family members</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.V2.getUserFamilyMembers)">Get user family members V2
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserSponsors)">Get user sponsors</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.V2.getUserSponsors)">Get user sponsors V2</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserUnPaidViolations)">Get user un paid violations
+  </div>
+  <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserPaidViolations)">Get user paid violations
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserVehicles)"> Get user vehicles </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testUserPhoto(this, TWK.getUserProfilePhoto)">Get user photo</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserPassports)">Get user passports
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserEmail)">Get user Email
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserDocumentNumber)">Get user Document Number (GCC / Passport number)
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getUserBirthCity)">Get user birth city
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="">
+      Test get image by national id.
+    </div>
+    <label for="nationalId">National Id:</label>
+    <input type="text" id="nationalId" name="nationalId"><br><br>
+    <input type="submit" value="Submit" onClick="testGetImage(this)"> <br><br>
+    <div class="apiresultbox" id="imageDive"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.getDeviceInfo)">Get Current values or statuses of
+      mini app device capabilities</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testGalleryFetch(this, TWK.getGallerySingle)">Open device gallery, Get Single
+      Image</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testGalleryFetch(this, TWK.getGalleryMulti)">Open device gallery, Get
+      Multiple Images</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testGalleryFetch(this, TWK.getGallerySingleVideo)">Open device gallery, Get
+      Single Video</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testGalleryFetch(this, TWK.getGalleryMultiVideo)">Open device gallery, Get
+      Multiple Videos</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testCameraPhoto(this, TWK.getCameraPhoto)">Open device camera, Take a Photo
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testCameraVideo(this, TWK.getCameraVideo)">Open device camera, Take a video
+    </div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testChooseFile(this, TWK.getFileBase64)">Open device files, choose a file
+      base64</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testChooseFileAndGetFileName(this)">Open device files, choose a file
+       with file name</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.askUserLocationPermission)">Ask device location
+      permissions</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.askUserPreciseLocationPermission)">Ask device precise
+      location permissions</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.askCameraPermission)">Ask camera permissions</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.askGalleryPermission)">Ask gallery permissions</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testBaseFetch(this, TWK.askPushNotificationPermission)">Ask push notification
+      permissions</div>
+    <div class="apiresultbox"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick=" testBaseFetch(this, TWK.shareScreenShot)">Take Screenshot and open share
+      dialog</div>
+    <div class="apiresultbox">
+    </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick=" testBaseFetch(this, TWK.authenticateBiometric)"> Authenticate Biometric
+    </div>
+    <div class="apiresultbox">
+    </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick=" testBaseFetch(this, TWK.generateToken)"> Generate Token </div>
+    <div class="apiresultbox">
+    </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick=" testBaseFetch(this, TWK.V2.generateToken)"> Generate Token V2 </div>
+    <div class="apiresultbox">
+    </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick=" testBaseFetch(this, TWK.scanCode)">Open Scan Code</div>
+    <div class="apiresultbox">
+    </div>
+  </div>
+
+  <div class="apicallbox">
+    <div class="apicallboxbutton">Open Open Service</div>
+    <div class="apiresultbox">
+      <label for="serviceId"> Service Id:</label>
+      <input type="text" id="serviceId" name="serviceId"><br><br>
+      <label for="serviceParms"> Service Parameters:</label>
+      <input type="text" id="serviceParms" name="serviceParms"><br><br>
+      <label for="agencyId"> Service parameters Example: [{"key":"orderId","value":"1234"},
+        {"key":"requestNumber","value":"1234"}]</label><br><br>
+      <input type="submit" value="Submit" onClick="testOpenService(this)"> <br><br>
+      <label for="openServiceResponseLabel"> </label>
+      <label id="openServiceResponseLabel"> </label>
+    </div>
+  </div>
+
+  <div class="apicallbox">
+    <div class="apicallboxbutton"> Share files with supported types </div>
+    <div class="apiresultbox">
+      <label for="shareFileName"> File Name:</label>
+      <input type="text" id="shareFileName" name="shareFileName"><br><br>
+      <input type="button" value="Share PDF File" onClick="testSharePdfSubmit(this)">
+      | <input type="button" value="Share PNG Image" onClick="testSharePngSubmit(this)">
+      | <input type="button" value="Share JPG Image" onClick="testShareJpgSubmit(this)">
+      | <input type="button" value="Share Not Supported Type" onClick="testShareNotSupportedSubmit(this)">
+      <br><br>
+      <label for="shareText"> Share text string:</label>
+      <input type="text" id="shareText" name="shareText"><br><br>
+      <input type="button" value="Share text" onClick="testShareTextStringSubmit(this)">
+      <br><br>
+      <label for="sharePdfResponseLabel"> </label>
+      <label id="sharePdfResponseLabel"> </label>
+    </div>
+  </div>
+
+  <div class="apicallbox">
+    <div class="apicallboxbutton"> Test card submit</div>
+    <div class="apiresultbox" id="">
+      <label for="actionType">Action Type:</label>
+      <select name="actionType" id="actionType">
+        <option value="1">Add</option>
+        <option value="2">Update</option>
+        <option value="3">Remove</option>
+      </select><br><br>
+      <label for="agencyId"> Agency Id:</label>
+      <input type="text" id="agencyId" name="agencyId"><br><br>
+      <label for="uniqueCardId"> Unique card Id:</label>
+      <input type="text" id="uniqueCardId" name="uniqueCardId"><br><br>
+      <label for="cardReferenceNo"> Card reference Number:</label>
+      <input type="text" id="cardReferenceNo" name="cardReferenceNo"><br><br>
+      <label for="cardExpiryDate">Card Expiration Date:</label>
+      <input type="datetime-local" id="cardExpiryDate" name="cardExpiryDate"><br><br>
+      <label for="jobTitleAr"> Job Title Ar:</label>
+      <input type="text" id="jobTitleAr" name="jobTitleAr"><br><br>
+      <label for="jobTitleEn"> Job Title En:</label>
+      <input type="text" id="jobTitleEn" name="jobTitleEn"><br><br>
+      <label for="employeeNo">Employee No:</label>
+      <input type="text" id="employeeNo" name="employeeNo"><br><br>
+      <label for="expiryDateEn">Expiration Date En:</label>
+      <input type="date" id="expiryDateEn" name="expiryDateEn"><br><br>
+      <label for="expiryDateAr">Expiration Date Ar</label>
+      <input type="text" id="expiryDateAr" name="expiryDateAr"><br><br>
+      <input type="submit" value="Submit" onClick="testCardSubmit(this)"> <br><br>
+      <label for="addcardResponseLabel"> </label>
+      <label id="addCardResponseLabel"> </label>
+
+    </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="testOpenScreen(this)">Test open screen api</div>
+    <div class="apiresultbox">
+    </div>
+    <div class="apiresultbox">
+      <label for="screenType">Screen type:</label>
+      <input type="text" id="screenType" value="wallet"><br><br>
+      <label for="keyname">key name:</label>
+      <input type="text" id="keyname" value="actionName"><br><br>
+      <label for="valuename">value name:</label>
+      <input type="text" id="valuename" value="100 SAR"><br><br>
+    </div>
+
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="">
+      This was in the launch payload.
+    </div>
+    <div class="apiresultbox" id="launchPayload"> ... </div>
+  </div>
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="">
+      Test Set local storage.
+    </div>
+    <label for="localStorageKey">Local Storage Key:</label>
+    <input type="text" id="localStorageKey" name="localStorageKey"><br><br>
+    <label for="localStorageValue">Local Storage Value:</label>
+    <input type="text" id="localStorageValue" name="localStorageValue"><br><br>
+    <input type="submit" value="Submit" onClick="testSetLocalStorage(this)"> <br><br>
+    <div class="apiresultbox" id="localStorage"> ... </div>
+
+  </div>
+
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="">
+      Test get local storage.
+    </div>
+    <label for="localStorageKey">Local Storage Key:</label>
+    <input type="text" id="localStorageGetKey" name="localStorageGetKey"><br><br>
+    <input type="submit" value="Submit" onClick="testGetLocalStorage(this)"> <br><br>
+    <div class="apiresultbox" id="localStoragekeyValue"> ... </div>
+  </div>
+
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="">
+      Test Payment
+    </div>
+    <label for="paymentUrl">Payment Url:</label>
+    <input type="text" id="paymentUrl" name="paymentUrl"><br><br>
+    <label for="paymenSuccessCallback">Payment Success CallBack Url List separated by comma:</label>
+    <input type="text" id="paymenSuccessCallback" name="paymenSuccessCallback"><br><br>
+    <label for="paymenFailureCallback">Payment Failure Callback Url List separated by comma:</label>
+    <input type="text" id="paymenFailureCallback" name="paymenFailureCallback"><br><br>
+    <input type="submit" value="Submit" onClick="testPayment(this)"> <br><br>
+  </div>
+
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="">
+      Test Documents
+    </div>
+    <label>Document File:</label> | <input type="submit" value="Choose File"
+      onClick="testChooseDocumentFile(this, TWK.getFileBase64)"> <br><br>
+    <label for="referenceNumber">Reference Number:</label>
+    <input type="text" id="referenceNumber" name="referenceNumber"><br><br>
+    <label for="categoryId">Category Id:</label>
+    <input type="text" id="categoryId" name="categoryId"><br><br>
+    <label for="documentName"> Document Name:</label>
+    <input type="text" id="documentName" name="documentName"> <br><br>
+    <input type="submit" value="Add Document" onClick="testAddDocument(this)">
+    <input type="submit" value="Update Documen" onClick="testUpdateDocument(this)"> <br><br>
+    <label id="documentsResponseLabel"> </label>
+  </div>
+
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="">
+      Test Delete Documents
+    </div>
+    <label for="deleteDocumentReferenceNumber">Reference Number:</label>
+    <input type="text" id="deleteDocumentReferenceNumber" name="deleteDocumentReferenceNumber"><br><br>
+    <label for="deleteDocumentCategoryId">Category Id:</label>
+    <input type="text" id="deleteDocumentCategoryId" name="deleteDocumentCategoryId"><br><br>
+    <input type="submit" value="Delete Document" onClick="testDeleteDocument(this)"> <br><br>
+    <label id="deleteDocumentsResponseLabel"> </label>
+  </div>
+
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="">
+      Test General Log
+    </div>
+    <label for="logType">Log Type:</label>
+    <select name="logType" id="logType">
+      <option value="1">info</option>
+      <option value="2">warning</option>
+      <option value="3">error</option>
+      <option value="4">debug</option>
+    </select><br>
+    <label for="eventName">Event Name:</label>
+    <input type="text" id="eventName" name="eventName"><br>
+    <label for="logMessage">Log Message:</label>
+    <input type="text" id="logMessage" name="logMessage"><br><br>
+    <input type="submit" value="Log General" onClick="testGeneralLog(this)"> <br><br>
+    <input type="submit" value="Test General log async" onClick="testGeneralLogAsync(this)"> <br><br>
+    <label id="generalLogResponseLabel"> </label>
+  </div>
+
+  <div class="apicallbox">
+    <div class="apicallboxbutton" onClick="">
+      Test API Log
+    </div>
+    <label for="apiUrl">API Url:</label>
+    <input type="text" id="apiUrl" name="apiUrl"><br>
+    <label for="logType">Method Type:</label>
+    <select name="methodType" id="methodType">
+      <option value="1">GET</option>
+      <option value="2">POST</option>
+      <option value="3">PUT</option>
+      <option value="4">DELETE</option>
+      <option value="5">PATCH</option>
+    </select><br>
+    <label for="requestHeaders">Request Headers:</label>
+    <input type="text" id="requestHeaders" name="requestHeaders"><br>
+    <label for="requestBody">Request Body:</label>
+    <input type="text" id="requestBody" name="requestBody"><br>
+    <label for="requestDate">Request Date:</label>
+    <input type="datetime-local" id="requestDate" name="requestDate"><br>
+    <label for="responseHeaders">Response Headers:</label>
+    <input type="text" id="responseHeaders" name="responseHeaders"><br>
+    <label for="responseBody">Response Body:</label>
+    <input type="text" id="responseBody" name="responseBody"><br>
+    <label for="responseDate">Response Date:</label>
+    <input type="datetime-local" id="responseDate" name="responseDate"><br>
+    <label for="responseCode">Response Code:</label>
+    <input type="text" id="responseCode" name="responseCode"><br><br>
+    <input type="submit" value="Log API" onClick="testApiLog(this)"> <br><br>
+    <input type="submit" value="Test API log async" onClick="testApiLogAsync(this)"> <br><br>
+    <label id="apiLogResponseLabel"> </label>
+  </div>
+
+  <div class="apicallbox"></div>
+    <div class="apicallboxbutton" onClick="">
+      Test API Calls
+    </div>
+    <input type="submit" value="Test API call" onClick="testAPI(this)"> <br><br>
+  </div>
+
+  <div class="apicallbox"></div>
+  <div class="apicallboxbutton" onClick="">
+    Test Error Calls
+  </div>
+  <input type="submit" value="Test log error" onClick="testError(this)"> <br><br>
+</div>
+<div class="apicallbox"></div>
+  <div class="apicallboxbutton" onClick="">
+    Test Open Link
+  </div>
+  <label for="urlType">URL Type:</label>
+  <select name="urlType" id="urlType">
+    <option value="1">HTTP</option>
+    <option value="2">MAIL TO</option>
+    <option value="3">TEL</option>
+    <option value="4">DEEP LINK</option>
+    <option value="5">SMS</option>
+  </select><br>
+  <label for="urlString">URL String:</label>
+  <input type="text" id="urlString" name="urlString"><br>
+  <input type="submit" value="Submit" onClick="testOpenUrl(this)"> <br><br>
+  <label id="openUrlResponseLabel"> </label>
+</div>
+<div class="apicallbox"></div>
+  <div class="apicallboxbutton" onClick="">
+    Test ML-KIt Liveness Check
+  </div>  
+  Face detection enabled: <input type="checkbox" id="face_enabled" style="margin-right: 50px;" checked="true"> 
+  <label for="face_ratio">Ratio:</label>
+  <input type="number" id="face_ratio" name="face_ratio" min="1" max="100"  value="50">     
+  <br>
+  Glasses detection enabled: <input type="checkbox" id="glasses_enabled" style="margin-right: 50px;" checked="true">     
+  <label for="glasses_ratio">Ratio:</label>
+  <input type="number" id="glasses_ratio" name="glasses_ratio" min="1" max="100"  value="25">
+  <br> 
+  Face centeral vertical enabled: <input type="checkbox" id="face_centeral_vertical_enabled" style="margin-right: 50px;" checked="true">
+  <label for="face_centeral_vertical_ratio">Ratio:</label>
+  <input type="number" id="face_centeral_vertical_ratio" name="face_centeral_vertical_ratio" min="1" max="100"  value="12">
+  <br> 
+  Mouth detection enabled: <input type="checkbox" id="mouth_detection_enabled" style="margin-right: 50px;" checked="true">
+  <label for="mouth_detection_ratio">Ratio:</label>
+  <input type="number" id="mouth_detection_ratio" name="mouth_detection_ratio" min="1" max="100"  value="50">
+  <br> 
+  Eyes color detection enabled: <input type="checkbox" id="eyes_color_detection_enabled" style="margin-right: 50px;" checked="true">
+  <label for="eyes_color_detection_ratio">Ratio:</label>
+  <input type="number" id="eyes_color_detection_ratio" name="eyes_color_detection_ratio" min="1" max="100"  value="70">
+  <br> 
+  Lightining detection enabled: <input type="checkbox" id="lightining_detection_enabled" style="margin-right: 50px;" checked="true">
+  <label for="lightining_detection_ratio">Ratio:</label>
+  <input type="number" id="lightining_detection_ratio" name="lightining_detection_ratio" min="1" max="100"  value="70">
+  <br> 
+  Eyes detection enabled: <input type="checkbox" id="eyes_detection_enabled" style="margin-right: 50px;" checked="true">
+  <label for="eyes_detection_ratio">Ratio:</label>
+  <input type="number" id="eyes_detection_ratio" name="eyes_detection_ratio" min="1" max="100"  value="70">
+  <br> 
+  Background detection enabled: <input type="checkbox" id="background_detection_enabled" style="margin-right: 50px;" checked="true">
+  <label for="background_detection_ratio">Ratio:</label>
+  <input type="number" id="background_detection_ratio" name="background_detection_ratio" min="1" max="100" value="70">
+  <br> 
+  Head wear check enabled: <input type="checkbox" id="head_wear_check_enabled" checked="true">
+  <br> 
+  Is female: <input type="checkbox" id="is_female">
+  <br> 
+  <label for="max_photo_width_in_px">Max photo width in pixles:</label>
+  <input type="number" id="max_photo_width_in_px" name="max_photo_width_in_px" min="480" max="1000"  value="480">
+  <br> 
+  <label for="max_photo_height_in_px">Max photo height in pixles:</label>
+  <input type="number" id="max_photo_height_in_px" name="max_photo_height_in_px" min="640" max="1000"  value="640">
+  <br> 
+  <label for="max_photo_size_kb">Max photo size in kb:</label>
+  <input type="number" id="max_photo_size_kb" name="max_photo_size_kb" min="1" max="30000"  value="1024">
+  <br> 
+  <label for="allowd_image_types">Allowed image types:</label>
+  <input type="text" id="allowd_image_types" name="allowd_image_types" value="jpg,jpeg">
+  <br>
+  <br>
+  <input type="submit" value="Open Camera" onClick="testLivenessCheckCamera(this)">  <br>  <input type="submit" value="Select image from gallery" onClick="testLivenessCheckImageFromGallery(this)">  <br> <input type="submit" value="Select image from files" onClick="testLivenessCheckImageFromFiles(this)">
+  <div id="livenessCheckDev" class="apiresultbox">
+  </div>
+</div>
+
+</Body>
+
+</Html>
