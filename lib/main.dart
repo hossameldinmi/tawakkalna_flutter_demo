@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tawakkalna_intg/platform/platform_util.dart';
 
 void main() {
   runApp(const MyApp());
@@ -56,6 +57,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  dynamic _userId;
+  dynamic _error;
 
   void _incrementCounter() {
     setState(() {
@@ -111,6 +114,62 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Text(
+              'user id: $_userId',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Text(
+              '$_error',
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Colors.red,
+                  ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                try {
+                  await PlatformUtil.getUserId().then((value) {
+                    print('user_id_response');
+                    print(value);
+                    setState(() {
+                      _userId = value;
+                      _error = null;
+                    });
+                  }).onError((error, stackTrace) {
+                    setState(() {
+                      _error = error.toString();
+                    });
+                  });
+                } catch (error, st) {
+                  setState(() {
+                    _error = error.toString();
+                  });
+                }
+              },
+              child: const Text('Get User ID'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                try {
+                  await PlatformUtil.generateToken().then((value) {
+                    print('token');
+                    print(value);
+                    setState(() {
+                      _userId = value;
+                      _error = null;
+                    });
+                  }).onError((error, stackTrace) {
+                    setState(() {
+                      _error = error.toString();
+                    });
+                  });
+                } catch (error, st) {
+                  setState(() {
+                    _error = error.toString();
+                  });
+                }
+              },
+              child: const Text('Generate Token'),
             ),
           ],
         ),
