@@ -1,16 +1,47 @@
-// ignore_for_file: avoid_web_libraries_in_flutter
+@JS()
+library js_interop;
+
+import 'dart:convert';
+import 'dart:js_util' as js_util;
+import 'package:js/js.dart';
 import 'package:tawakkalna_intg/platform/platform_util.dart';
 
-import 'dart:js' as js;
+@JS()
+external _generateTokenJs();
+
+@JS()
+external _getUserIdJs();
 
 class PlatformUtilFacadeImpl implements PlatformUtilFacade {
   @override
   Future<dynamic> generateToken() async {
-    return js.context['TWK']!.callMethod('generateToken');
+    try {
+      final promise = _generateTokenJs();
+      print('promise');
+      print(promise);
+      final response = await js_util.promiseToFuture(promise);
+      print('response');
+      print(response);
+      return response;
+    } catch (e, st) {
+      print(e);
+      print(st);
+      rethrow;
+    }
   }
 
   @override
-  Future<dynamic> getUserId() {
-    return js.context['TWK']!.callMethod('getUserId');
+  Future<dynamic> getUserId() async {
+    try {
+      final request = _getUserIdJs();
+      final response = await js_util.promiseToFuture(request);
+      print('response');
+      print(response);
+      return response;
+    } catch (e, st) {
+      print(e);
+      print(st);
+      rethrow;
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tawakkalna_intg/js_interop_service.dart';
 import 'package:tawakkalna_intg/platform/platform_util.dart';
 
 void main() {
@@ -56,8 +57,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final _jsInteropService = JsInteropService();
   int _counter = 0;
-  dynamic _userId;
+  dynamic _response;
   dynamic _error;
 
   void _incrementCounter() {
@@ -116,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Text(
-              'user id: $_userId',
+              'user id: $_response',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Text(
@@ -126,50 +128,57 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
             ),
             ElevatedButton(
-              onPressed: () async {
-                try {
-                  await PlatformUtil.getUserId().then((value) {
-                    print('user_id_response');
-                    print(value);
-                    setState(() {
-                      _userId = value;
-                      _error = null;
-                    });
-                  }).onError((error, stackTrace) {
-                    setState(() {
-                      _error = error.toString();
-                    });
+              onPressed: () {
+                PlatformUtil.generateToken().then((value) {
+                  print('token');
+                  print(value);
+                  setState(() {
+                    _response = value;
+                    _error = null;
                   });
-                } catch (error, st) {
+                }).onError((error, stackTrace) {
                   setState(() {
                     _error = error.toString();
                   });
-                }
+                });
+              },
+              child: const Text('Generate Token'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                print('get user id pressed ${PlatformUtil.getUserId()}');
+
+                PlatformUtil.getUserId().then((value) {
+                  print('user_id_response');
+                  print(value);
+                  setState(() {
+                    _response = value;
+                    _error = null;
+                  });
+                }).onError((error, stackTrace) {
+                  setState(() {
+                    _error = error.toString();
+                  });
+                });
               },
               child: const Text('Get User ID'),
             ),
             ElevatedButton(
-              onPressed: () async {
-                try {
-                  await PlatformUtil.generateToken().then((value) {
-                    print('token');
-                    print(value);
-                    setState(() {
-                      _userId = value;
-                      _error = null;
-                    });
-                  }).onError((error, stackTrace) {
-                    setState(() {
-                      _error = error.toString();
-                    });
+              onPressed: () {
+                _jsInteropService.getSomeAsyncData().then((value) {
+                  print('get_some_async_data');
+                  print(value);
+                  setState(() {
+                    _response = value;
+                    _error = null;
                   });
-                } catch (error, st) {
+                }).onError((error, stackTrace) {
                   setState(() {
                     _error = error.toString();
                   });
-                }
+                });
               },
-              child: const Text('Generate Token'),
+              child: const Text('Other implementation'),
             ),
           ],
         ),

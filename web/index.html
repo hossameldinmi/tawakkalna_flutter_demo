@@ -14,7 +14,8 @@
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
   -->
-  <base href="$FLUTTER_BASE_HREF">
+  <!-- <base href="$FLUTTER_BASE_HREF"> -->
+  <base href="./">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
@@ -31,10 +32,15 @@
 
   <title>tawakkalna_intg</title>
   <link rel="manifest" href="manifest.json">
-  <script type="text/javascript" src="twkhelper/twkhelper.js"></script>
+  <!-- <script type="text/javascript" src="twkhelper/twkhelper.js"></script> -->
+  <!-- <script type="text/javascript" src="twkhelper/twk_wrapper.js" defer></script> -->
+  <script src="./assets/assets/js/twkhelper.js" defer=""></script>
+  <!-- <script src="/assets/assets/js/twk_wrapper.js" defer=""></script> -->
+  <script src="./assets/assets/js/main.js" defer=""></script>
+
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
-  <script src="twkhelper/twkhelper.js" async></script>
 </body>
 </html>
+   
