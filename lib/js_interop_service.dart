@@ -19,7 +19,7 @@ external _getData();
 external _getJsonData();
 
 @JS()
-external _getSomeAsyncData();
+external _generateTokenJs();
 
 @JS()
 external _shareImage(String url, String filename);
@@ -45,7 +45,7 @@ class JsInteropService {
   }
 
   Future<Map<String, dynamic>> getSomeAsyncData() async {
-    final promise = await _getSomeAsyncData();
+    final promise = await _generateTokenJs();
     final data = await promiseToFuture(promise);
     print(data);
     return json.decode(data);

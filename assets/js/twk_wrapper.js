@@ -63,7 +63,7 @@ const init = () => {
     window._requestFullScreen = requestFullScreen;
     window._getData = getData;
     window._getJsonData = getJsonData;
-    window._getSomeAsyncData = generateTokenJs;
+    window._generateTokenJs = generateTokenJs;
     window._shareImage = shareImage;
 
 }
