@@ -64,7 +64,7 @@ const init = () => {
     window._getData = getData;
     window._getJsonData = getJsonData;
     window._generateTokenJs = generateTokenJs;
-    window._shareImage = shareImage;
+    window._getUserIdJs = getUserIdJs;
 
 }
 
