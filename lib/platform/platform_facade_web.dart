@@ -1,22 +1,23 @@
+// ignore_for_file: depend_on_referenced_packages, avoid_web_libraries_in_flutter
+
 @JS()
 library js_interop;
 
-import 'dart:convert';
 import 'dart:js_util' as js_util;
 import 'package:js/js.dart';
 import 'package:tawakkalna_intg/platform/platform_util.dart';
 
 @JS()
-external _generateTokenJs();
+external generateTokenJs();
 
 @JS()
-external _getUserIdJs();
+external getUserIdJs();
 
 class PlatformUtilFacadeImpl implements PlatformUtilFacade {
   @override
   Future<dynamic> generateToken() async {
     try {
-      final promise = _generateTokenJs();
+      final promise = generateTokenJs();
       print('promise');
       print(promise);
       final response = await js_util.promiseToFuture(promise);
@@ -33,7 +34,7 @@ class PlatformUtilFacadeImpl implements PlatformUtilFacade {
   @override
   Future<dynamic> getUserId() async {
     try {
-      final request = _getUserIdJs();
+      final request = getUserIdJs();
       final response = await js_util.promiseToFuture(request);
       print('response');
       print(response);

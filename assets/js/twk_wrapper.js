@@ -1,74 +1,11 @@
-
-
-const init = () => {
-
-    const generateTokenJs =  async () => {
-        var response=await window.TWK.generateToken();
-        return JSON.stringify(response.result, null, 2);
-      }
-      const getUserIdJs =  async () => {
-        var response=await window.TWK.getUserId();
-        return JSON.stringify(response.result, null, 2);
-      }
-
-    const showAlert = (message) => {
-        alert(message);
-    }
-    const requestFullScreen = () => {
-        document.documentElement.requestFullscreen();
-    }
-
-    const getData = () => {
-        return "abc123";
-    }
-
-    const getJsonData = () => {
-        const json = { 'foo': 'bar' }
-        return JSON.stringify(json);
-    }
-
-    const getSomeAsyncData = async () => {
-        await new Promise((resolve, _) => setTimeout(resolve, 1000));
-        return "foobar";
-    }
-
-    const shareImage = async (url, filename) => {
-        const response = await fetch(url.toString());
-        const blob = await response.blob();
-
-        const filesArray = [
-            new File([blob], filename, {
-                type: 'image/jpeg',
-                lastModified: new Date().getTime(),
-            }),
-        ];
-
-        const shareData = {
-            files: filesArray,
-        };
-
-        if (navigator.canShare && navigator.canShare(shareData)) {
-
-            await navigator.share(shareData);
-            return true;
-
-        } else {
-            alert("Can't share!")
-            return false;
-        }
-
-    }
-
-    window._showAlert = showAlert;
-    window._requestFullScreen = requestFullScreen;
-    window._getData = getData;
-    window._getJsonData = getJsonData;
-    window._generateTokenJs = generateTokenJs;
-    window._getUserIdJs = getUserIdJs;
-
-}
-
-
-window.onload = () => {
-    init();
-}
+async function generateTokenJs(){
+    var response=await window.TWK.generateToken();
+    return JSON.stringify(response.result, null, 2);
+  }
+  async function getUserIdJs(){
+      
+    var response=await window.TWK.getUserId();
+    return JSON.stringify(response.result, null, 2);
+   
+  }
+  
